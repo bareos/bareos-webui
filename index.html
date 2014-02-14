@@ -1,79 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Bareos-webui : Main repository" />
+   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="fbergkemper.github.io">
+    <meta name="author" content="Frank Bergkemper">
+    <link rel="shortcut icon" href="images/favicon.png">
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <title>Bareos Web-Frontend</title>
 
-    <title>Bareos-webui</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/bareos/bareos-webui">View on GitHub</a>
-
-          <h1 id="project_title">Bareos-webui</h1>
-          <h2 id="project_tagline">Main repository</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/bareos/bareos-webui/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/bareos/bareos-webui/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Bareos-webui maintained by <a href="https://github.com/bareos">bareos</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-theme.css" rel="stylesheet">
+    <link href="bootstrap/css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="bootstrap/css/additional.css" rel="stylesheet">
     
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    
+  </head>
+  
+<body>
 
-  </body>
+  <p class="small"><a id="forkme_banner" href="https://github.com/fbergkemper/barbossa" role="button">View on GitHub</a></p>
+
+  <div class="container">
+  
+  <div class="header">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="http://fbergkemper.github.io/">Home</a></li>
+          <li><a href="http://fbergkemper.github.io/news.html">News</a></li>
+          <li><a href="http://fbergkemper.github.io/support.html">Support</a></li>
+          <li><a href="http://fbergkemper.github.io/documentation.html">Documentation</a></li>
+          <li><a href="http://fbergkemper.github.io/contribute.html">Contribute</a></li>
+          <li><a href="http://fbergkemper.github.io/download.html">Download</a></li>
+        </ul>
+        <h2 class="text-muted">Bareos Web-Frontend</h2>
+  </div>
+
+  <div class="row">
+  <div class="col-md-8">
+  <img src="images/pic1.png" class="img-thumbnail" />
+  </div>
+  </div>
+  
+  <br />
+  
+  <h3>About</h3>
+  
+  <div class="row">
+  <div class="col-md-8">
+  
+  <p>The Bareos Web-Frontend is a free software tool written in PHP, intended to manage the Backup, Archiving and Recovery
+  Software <a href="http://www.bareos.org/" target="_blank">Bareos</a> over the Web.</p> 
+  
+  <p>The Web-Frontend is based on <a href="http://framework.zend.com/" target="_blank">Zend Framework 2</a> an open source framework for developing web 
+  applications and services using <a href="http://www.php.net/" target="_blank">PHP 5.3+</a> and makes extensive use of the 
+  Twitter <a href="http://getbootstrap.com/" target=_blank">Bootstrap</a> front-end framework.</p>
+  
+  <p>The Bareos Web-Frontend is licensed under AGPL Version 3.</p>
+  <p><a href="http://www.gnu.org/licenses/agpl-3.0.html" target="_blank"><img src="images/agplv3-155x51.png" /></a></p>
+  
+  </div>
+  </div>
+  
+  <br />
+  
+  <h3>Features</h3>
+  
+  <div class="row">
+  <div class="col-md-8">
+  
+  <ul>
+  <li>Intuitive web interface</li>
+  <li>Multilingual support</li>
+  <li>Responsive Webdesign</li>
+  <li>Detailed information on Jobs, Clients, Filesets, Pools, Volumes, Storage, Director, Scheduler and Logs</li>
+  <li>Cancel and rerun jobs via webinterface</li>
+  <li>Statistics</li>
+  <li>and much more ...</li>
+  </ul>
+  
+  </div>
+  </div>
+	
+  <br />	
+	
+  <h3>Screenshots</h3>
+  
+  <div class="row">
+  <div class="col-md-8">
+  
+  <div class="row">
+  <div class="col-md-8">
+  <a href="images/screenshots/preview1.png"><img src="images/screenshots/preview1.png" class="img-thumbnail" /></a>
+  </div>
+  </div>
+  
+  <br />
+  
+  <div class="row">
+  <div class="col-md-8">
+  <a href="images/screenshots/preview2.png"><img src="images/screenshots/preview2.png" class="img-thumbnail" /></a>
+  </div>
+  </div>
+  
+  <br />
+  
+  <div class="row">
+  <div class="col-md-8">
+  <a href="images/screenshots/preview3.png"><img src="images/screenshots/preview3.png" class="img-thumbnail" /></a>
+  </div>
+  </div>
+  
+  <br />
+  
+  <div class="row">
+  <div class="col-md-8">
+  <a href="images/screenshots/preview4.png"><img src="images/screenshots/preview4.png" class="img-thumbnail" /></a>
+  </div>
+  </div>
+  
+  <br />
+  
+  <div class="row">
+  <div class="col-md-8">
+  <a href="images/screenshots/preview5.png"><img src="images/screenshots/preview5.png" class="img-thumbnail" /></a>
+  </div>
+  </div>
+  
+  </div>
+  </div>
+
+  <br />
+  
+  <div class="footer">
+        <p class="text-muted">Hosted on <a href="http://pages.github.com/">GitHub Pages</a></p>
+  </div>
+  
+  </div>
+  
+</body>
+  
 </html>
