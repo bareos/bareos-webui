@@ -277,6 +277,8 @@ $flash->setMessageOpenFormat('
 			<li><a href="<?php echo $this->url('log', array('action' => 'job', 'id' => $jobUnsuccess->jobid)); ?>" title="<?php echo $this->translate("View logs"); ?>"><span class="glyphicon glyphicon-file"></span> View messages</a></li>
 			<li class="divider"></li>
 	      		<li><a href="<?php echo $this->url('job', array('action' => 'rerun', 'id' => $jobUnsuccess->jobid)); ?>" title="<?php echo $this->translate("Rerun"); ?>"><span class="glyphicon glyphicon-repeat"></span> Re-run job</a></li>
+	      		<li class="divider"></li>
+                        <li><a href="<?php echo $this->url('job', array('action' => 'deljob', 'id' => $jobUnsuccess->jobid)); ?>" title="<?php echo $this->translate("Deljob"); ?>"><span class="glyphicon glyphicon-trash"></span> Delete job</a></li>
 	      	</ul>
 		</div>
 	      <?php endif; ?>
