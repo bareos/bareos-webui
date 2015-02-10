@@ -169,6 +169,19 @@ class JobController extends AbstractActionController
 			)
 		);
 	}
+	public function deljobAction()
+        {
+                $jobid = (int) $this->params()->fromRoute('id', 0);
+                $cmd = "delete jobid=" . $jobid;
+                $config = $this->getServiceLocator()->get('Config');
+                $bcon = new BConsoleConnector($config['bconsole']);
+                return new ViewModel(
+                        array(
+                                'bconsoleOutput' => $bcon->getBConsoleOutput($cmd),
+                                'jobid' => $jobid,
+                        )
+                );
+        }
 
 	public function cancelAction()
 	{
