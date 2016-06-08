@@ -157,7 +157,6 @@ $(document).ready(function() {
          { "data": null },
          { "type": "file-size", "data": "maxvolbytes" },
          { "type": "file-size", "data": "volbytes" },
-         { "data": "lastwritten" }
       ],
       "columnDefs": [
          {
@@ -168,7 +167,6 @@ $(document).ready(function() {
          },
          {
             "targets": 4,
-            "orderData": 9,
             "render": function(data, type, full, meta) {
                return formatLastWritten(data);
             }
@@ -191,11 +189,6 @@ $(document).ready(function() {
                return formatBytes(data);
             }
          },
-         {
-            "targets": 9,
-            "visible": false,
-            "searchable": false
-         }
       ],
       "buttons": [
       ],
