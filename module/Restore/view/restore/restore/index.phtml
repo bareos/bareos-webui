@@ -124,7 +124,7 @@ $this->headTitle($title);
    function unix_to_human(UNIX_timestamp) {
 
       var t = new Date(UNIX_timestamp * 1000);
-      var formatted = t.toUTCString();
+      var formatted = t.toLocaleString();
 
       return formatted;
 
