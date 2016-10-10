@@ -6,8 +6,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re, sys, os
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities   
-
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 class Bareos(unittest.TestCase):
 
@@ -23,80 +22,23 @@ class Bareos(unittest.TestCase):
         self.accept_next_alert = True
 
     def test_bareos(self):
-        if os.getenv('PRODVERSION').startswith("16.2"):
-            driver = self.driver
-            
-            if os.getenv('DIST') == "windows":
-                driver.get(self.base_url + "/")
-            else:
-                driver.get(self.base_url + "/bareos-webui/")
-
-            Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
-            driver.find_element_by_name("consolename").clear()
-            
-            if os.getenv('DIST') == "windows":
-                driver.find_element_by_name("consolename").send_keys("admin")
-            else:
-                driver.find_element_by_name("consolename").send_keys("citest")
-   
-            driver.find_element_by_name("password").clear()
-
-            if os.getenv('DIST') == "windows":
-                driver.find_element_by_name("password").send_keys("admin")
-            else:
-                driver.find_element_by_name("password").send_keys("citestpass")
-            driver.find_element_by_id("submit").click()
-            driver.find_element_by_link_text("Director").click()
-            driver.find_element_by_link_text("Messages").click()
-            driver.find_element_by_link_text("Schedules").click()
-            driver.find_element_by_link_text("Scheduler status").click()
-            driver.find_element_by_link_text("Storages").click()
-            driver.find_element_by_link_text("Clients").click()
-            driver.find_element_by_link_text("Restore").click()
-            
-            if os.getenv('DIST') == "windows":
-                driver.find_element_by_partial_link_text("admin").click()
-            else:
-                driver.find_element_by_partial_link_text("citest").click()
-           
-            driver.find_element_by_link_text("Logout").click()
-
-        elif os.getenv('PRODVERSION') == "15.2":
-            driver = self.driver
-            driver.get(self.base_url + "/bareos-webui/")
-            Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
-            driver.find_element_by_name("consolename").clear()
-            driver.find_element_by_name("consolename").send_keys("citest")
-            driver.find_element_by_name("password").clear()
-            driver.find_element_by_name("password").send_keys("citestpass")
-            driver.find_element_by_id("submit").click()
-            driver.find_element_by_link_text("Director").click()
-            driver.find_element_by_link_text("Messages").click()
-            driver.find_element_by_link_text("Schedule").click()
-            driver.find_element_by_link_text("Scheduler status").click()
-            driver.find_element_by_link_text("Storages").click()
-            driver.find_element_by_link_text("Clients").click()
-            driver.find_element_by_link_text("Restore").click()
-            driver.find_element_by_partial_link_text("citest").click()
-            driver.find_element_by_link_text("Logout").click()
-        else:
-            driver = self.driver
-            driver.get(self.base_url + "/bareos-webui/")
-            Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
-            driver.find_element_by_name("consolename").clear()
-            driver.find_element_by_name("consolename").send_keys("citest")
-            driver.find_element_by_name("password").clear()
-            driver.find_element_by_name("password").send_keys("citestpass")
-            driver.find_element_by_id("submit").click()
-            driver.find_element_by_link_text("Director").click()
-            driver.find_element_by_link_text("Messages").click()
-            driver.find_element_by_link_text("Schedules").click()
-            driver.find_element_by_link_text("Scheduler status").click()
-            driver.find_element_by_link_text("Storages").click()
-            driver.find_element_by_link_text("Clients").click()
-            driver.find_element_by_link_text("Restore").click()
-            driver.find_element_by_partial_link_text("citest").click()
-            driver.find_element_by_link_text("Logout").click()
+        driver = self.driver
+        driver.get(self.base_url + "/bareos-webui/")
+        Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
+        driver.find_element_by_name("consolename").clear()
+        driver.find_element_by_name("consolename").send_keys("citest")
+        driver.find_element_by_name("password").clear()
+        driver.find_element_by_name("password").send_keys("citestpass")
+        driver.find_element_by_id("submit").click()
+        driver.find_element_by_link_text("Director").click()
+        driver.find_element_by_link_text("Messages").click()
+        driver.find_element_by_link_text("Schedule").click()
+        driver.find_element_by_link_text("Scheduler status").click()
+        driver.find_element_by_link_text("Storages").click()
+        driver.find_element_by_link_text("Clients").click()
+        driver.find_element_by_link_text("Restore").click()
+        driver.find_element_by_partial_link_text("citest").click()
+        driver.find_element_by_link_text("Logout").click()
 
     def is_element_present(self, how, what):
         try: self.driver.find_element(by=how, value=what)
@@ -124,5 +66,5 @@ class Bareos(unittest.TestCase):
         self.assertEqual([], self.verificationErrors)
 
 if __name__ == "__main__":
-    targethost = os.environ.get('VM_IP') 
+    targethost = os.environ.get('VM_IP')
     unittest.main()
