@@ -80,7 +80,7 @@ class RestoreController extends AbstractActionController
          $filesets = $this->getRestoreModel()->getFilesets();
          $restorejobs = $this->getRestoreModel()->getRestoreJobs();
 
-         if($backups == null) {
+         if(empty($backups)) {
             $errors = 'No backups of client <strong>'.$this->restore_params['client'].'</strong> found.';
          }
 
@@ -135,6 +135,7 @@ class RestoreController extends AbstractActionController
                return new ViewModel(array(
                   'restore_params' => $this->restore_params,
                   'form' => $form,
+                  'errors' => $errors
                ));
             }
 
