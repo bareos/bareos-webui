@@ -152,7 +152,43 @@ class JobModel
          throw new \Exception('Missing argument.');
       }
    }
-
+   
+   public function getRunningJobStatus(&$bsock = null)
+   {
+       if(!isset($bsock)) {
+           throw new \Exception('Missing argument.');
+       }
+   
+       $runningJobs = $this->getJobsByStatus($bsock, null, 'R');
+       $values = [];
+   
+       foreach ($runningJobs as $job) {
+           $cmd = 'status jobid=' . $job['jobid'];
+           $result = $bsock->send_command($cmd, 0, null);
+   
+           // Match lines
+           $matches = [
+               'type'   => 'Writing:\s(.+)\sBackup',
+               'client' => 'job\s(.+)\sJobId',
+               'volume' => 'Volume="(.+)"',
+               'files'  => 'Files=(.+)\sBytes',
+               'bytes'  => 'Bytes=(.+)\sAveBytes',
+               'avgbytes_sec'  => 'AveBytes\/sec=(.+)\sLastBytes',
+               'lastbytes_sec'  => 'LastBytes\/sec=(.+)\n',
+           ];
+   
+           $values[$job['jobid']] = [];
+           foreach ($matches as $key => $regex) {
+               $matches = [];
+               if (preg_match('/' . $regex . '/', $result, $matches)) {
+                   $value = str_replace(",", "", $matches[1]);
+                   $values[$job['jobid']][$key] = $value;
+               }
+           }
+       }
+       return $values;
+   }
+   
    public function getRestoreJobs(&$bsock=null)
    {
       if(isset($bsock)) {
