@@ -272,6 +272,56 @@ class JobController extends AbstractActionController
       }
    }
 
+   public function currentRunningJobAction()
+   {
+       $this->RequestURIPlugin()->setRequestURI();
+        
+       if(!$this->SessionTimeoutPlugin()->isValid()) {
+           return $this->redirect()->toRoute('auth', array('action' => 'login'), array('query' => array('req' => $this->RequestURIPlugin()->getRequestURI(), 'dird' => $_SESSION['bareos']['director'])));
+       }
+
+       if(!$this->CommandACLPlugin()->validate($_SESSION['bareos']['commands'], $this->required_commands)) {
+           $this->acl_alert = true;
+           return new ViewModel(
+               array(
+                   'acl_alert' => $this->acl_alert,
+                   'required_commands' => $this->required_commands,
+               )
+               );
+       }
+       
+       $jobid = (int) $this->params()->fromRoute('id', 0);
+        
+        
+       $serviceLocator = $this->getServiceLocator();
+        
+       try {
+           $this->bsock = $serviceLocator->get('director');
+       }
+       catch(Exception $e) {
+           echo $e->getMessage();
+       }
+        
+       $this->jobModel = $serviceLocator->get('Job\Model\JobModel');
+       $status = $this->jobModel->getRunningJobStatus($this->bsock, $jobid);
+        
+       try {
+           $this->bsock->disconnect();
+       }
+       catch(Exception $e) {
+           echo $e->getMessage();
+       }
+      $response = $this->getResponse();
+      $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+       
+       if(isset($status)) {
+           $response->setContent(JSON::encode($status));
+       }
+        
+       return $response;
+        
+   }
+   
    public function getDataAction()
    {
       $this->RequestURIPlugin()->setRequestURI();
@@ -410,6 +460,7 @@ class JobController extends AbstractActionController
 
       return $response;
    }
+
 
    public function getJobModel()
    {

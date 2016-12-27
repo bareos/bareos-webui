@@ -23,23 +23,23 @@
  *
  */
 ?>
-<?php foreach ($this->currentRunningJobs as $runningJob): ?>
+<?php foreach ($this->currentRunningJobs as $jobId => $runningJob): ?>
    <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title"><?php echo $this->translate('Current running job'); ?> <?php echo $runningJob['client']; ?></h3>
       </div>
       <div class="panel-body">   
-         <dl class="dl-horizontal">
+         <dl class="dl-horizontal" data-runningjob-id="<?php echo $jobId; ?>">
             <dt><?php echo $this->translate('Type'); ?></dt>
-            <dd><?php echo $runningJob['type']; ?></dd>
+            <dd class="runningjob-<?php echo $jobId; ?>-type"></dd>
             <dt><?php echo $this->translate('Files processed'); ?></dt>
-            <dd><?php echo $runningJob['files']; ?></dd>
+            <dd class="runningjob-<?php echo $jobId; ?>-files"></dd>
             <dt><?php echo $this->translate('Bytes processed'); ?></dt>
-            <dd><?php echo $this->FormatBytes($runningJob['bytes']); ?></dd>
+            <dd class="runningjob-<?php echo $jobId; ?>-bytes"></dd>
             <dt><?php echo $this->translate('Avg Speed'); ?></dt>
-            <dd><?php echo $this->FormatBytes($runningJob['avgbytes_sec'], null, null, false); ?>/s</dd>
+            <dd class="runningjob-<?php echo $jobId; ?>-avgbytes_sec"></dd>
             <dt><?php echo $this->translate('Speed'); ?></dt>
-            <dd><?php echo $this->FormatBytes($runningJob['lastbytes_sec'], null, null, false); ?>/s</dd>
+            <dd class="runningjob-<?php echo $jobId; ?>-lastbytes_sec"></dd>
          </dl>
       </div>
    </div>

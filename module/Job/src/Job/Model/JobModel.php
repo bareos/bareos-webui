@@ -153,37 +153,45 @@ class JobModel
       }
    }
    
-   public function getRunningJobStatus(&$bsock = null)
+   public function getRunningJobStatus(&$bsock = null, $jobid = null)
    {
        if(!isset($bsock)) {
            throw new \Exception('Missing argument.');
        }
-   
-       $runningJobs = $this->getJobsByStatus($bsock, null, 'R');
        $values = [];
+       
+       if (is_null($jobid)) {   
+           $runningJobs = $this->getJobsByStatus($bsock, null, 'R');
+       } else {
+           $runningJobs[] = ['jobid' => $jobid];
+       }
    
        foreach ($runningJobs as $job) {
+           
            $cmd = 'status jobid=' . $job['jobid'];
            $result = $bsock->send_command($cmd, 0, null);
    
            // Match lines
-           $matches = [
-               'type'   => 'Writing:\s(.+)\sBackup',
-               'client' => 'job\s(.+)\sJobId',
-               'volume' => 'Volume="(.+)"',
-               'files'  => 'Files=(.+)\sBytes',
-               'bytes'  => 'Bytes=(.+)\sAveBytes',
-               'avgbytes_sec'  => 'AveBytes\/sec=(.+)\sLastBytes',
-               'lastbytes_sec'  => 'LastBytes\/sec=(.+)\n',
-           ];
+           $regex = 'Writing:\s(.+)\sBackup\sjob\s(.+)\sJobId=([\d]+)\sVolume="(.+)"\n(.*)\n(.*)\n\s+Files=([\d,]+)\sBytes=([\d,]+)\sAveBytes\/sec=([\d,]+)\sLastBytes\/sec=([\d,]+)\s';               
    
            $values[$job['jobid']] = [];
-           foreach ($matches as $key => $regex) {
-               $matches = [];
-               if (preg_match('/' . $regex . '/', $result, $matches)) {
-                   $value = str_replace(",", "", $matches[1]);
-                   $values[$job['jobid']][$key] = $value;
-               }
+           $matches = [];
+           
+           if (preg_match_all('/' . $regex . '/', $result, $matches, PREG_SET_ORDER)) {
+              foreach ($matches as $job) {
+                 $tmpJobId = $job[3];
+                 $values[$tmpJobId]['type']   = $job[1];
+                 $values[$tmpJobId]['client'] = $job[2];
+                 $values[$tmpJobId]['volume'] = $job[4];
+                 $values[$tmpJobId]['files']  = str_replace(",", "", $job[7]);
+                 $values[$tmpJobId]['bytes']  = str_replace(",", "", $job[8]);
+                 $values[$tmpJobId]['avgbytes_sec']  = str_replace(",", "", $job[9]);
+                 $values[$tmpJobId]['lastbytes_sec']  = str_replace(",", "", $job[10]);
+                 
+                 if (!is_null($jobid) && $jobid == $job[3]) {
+                    return $values[$tmpJobId];
+                 }
+              }
            }
        }
        return $values;

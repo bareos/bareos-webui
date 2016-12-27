@@ -50,6 +50,7 @@ $this->headTitle($title);
    echo $this->headScript()->prependFile($this->basePath() . '/js/jqplot.barRenderer.min.js');
    echo $this->headScript()->prependFile($this->basePath() . '/js/jqplot.pieRenderer.min.js');
    echo $this->headScript()->prependFile($this->basePath() . '/js/jquery.jqplot.min.js');
+   echo $this->headScript()->prependFile($this->basePath() . '/js/bareos.formatters.js');
    echo $this->headLink()->prependStylesheet($this->basePath() . '/css/jquery.jqplot.min.css');
 
    echo $this->headScript()->prependFile($this->basePath() . '/js/datatables.plugins.js');
@@ -117,6 +118,37 @@ $this->headTitle($title);
       });
    }
 
+
+   function getCurrentRunningJob() {
+      $('[data-runningjob-id]').each(function(key, val) {
+          var jobId = $(this).attr('data-runningjob-id');
+          $.ajax({
+             url : '<?php echo $this->url('job', array('action' => 'currentrunningjob')); ?>' + jobId,
+             dataType: 'json',
+             timeout: 10000,
+             success: function(data) {
+                 $('.runningjob-' + jobId + '-files').html(data.files);
+                 $('.runningjob-' + jobId + '-type').html(data.type);
+                 if (data.bytes != 0) {
+                 	$('.runningjob-' + jobId + '-bytes').html(formatBytesExt(data.bytes));
+                 } else {
+                	 $('.runningjob-' + jobId + '-bytes').html('0 B');
+                 }
+                 if (data.avgbytes_sec != 0) {
+                     $('.runningjob-' + jobId + '-avgbytes_sec').html(formatBytesExt(data.avgbytes_sec, true) + '/s');
+                 } else {
+                     $('.runningjob-' + jobId + '-avgbytes_sec').html('0 B/s');
+                 }
+                 if (data.lastbytes_sec != 0) {
+                     $('.runningjob-' + jobId + '-lastbytes_sec').html(formatBytesExt(data.lastbytes_sec, true) + '/s');
+                 } else {
+                     $('.runningjob-' + jobId + '-lastbytes_sec').html('0 B/s');
+                 }
+             }
+          });
+      });
+   }
+
    $(document).ready(
       function() {
          setDtTextDomain('<?php echo $this->basePath() . '/js/locale'; ?>');
@@ -125,8 +157,10 @@ $this->headTitle($title);
          chart1();
 
          getDirectorMessages();
+         getCurrentRunningJob();
 
          setInterval('getDirectorMessages()', 30000);
+         setInterval('getCurrentRunningJob()', 5000);
 
          var table_jobs_last_status = $('#jobs-last-status').DataTable({
             "ajax": {
