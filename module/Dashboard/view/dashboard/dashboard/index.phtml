@@ -125,61 +125,29 @@ $this->headTitle($title);
          dataType: 'json',
          timeout: 10000,
          success: function(data) {
-         if (Object.keys(data).length >= 1) {
-            $(Object.keys(data)).each(function(key, jobId) {
-               $('.running-job-container').html(
-                  $('<dl>').addClass('dl-horizontal').append(
-                          $('<dt>').html('<?php echo $this->translate('Client'); ?>'),
-                          $('<dd>').html(data[jobId].client),
-                          $('<dt>').html('<?php echo $this->translate('Type'); ?>'),
-                          $('<dd>').html(data[jobId].type),
-                          $('<dt>').html('<?php echo $this->translate('Files processed'); ?>'),
-                          $('<dd>').html(data[jobId].files),
-                          $('<dt>').html('<?php echo $this->translate('Bytes processed'); ?>'),
-                          $('<dd>').html(formatBytesExt(data[jobId].bytes)),
-                          $('<dt>').html('<?php echo $this->translate('Avg Speed'); ?>'),
-                          $('<dd>').html(formatBytesExt(data[jobId].avgbytes_sec, true) + '/s'),
-                          $('<dt>').html('<?php echo $this->translate('Speed'); ?>'),
-                          $('<dd>').html(formatBytesExt(data[jobId].lastbytes_sec, true) + '/s'),
-                          $('<hr>')
-                  ) 
-               );
-            });
-         } else {
-             $('.running-job-container').html('Aktuell laufen keine Jobs.');
-         }   
-             /**
-
-             <dl class="dl-horizontal" data-runningjob-id="<?php echo $jobId; ?>">
-             <dt><?php echo $this->translate('Type'); ?></dt>
-             <dd class="runningjob-<?php echo $jobId; ?>-type"></dd>
-             <dt><?php echo $this->translate('Files processed'); ?></dt>
-             <dd class="runningjob-<?php echo $jobId; ?>-files"></dd>
-             <dt><?php echo $this->translate('Bytes processed'); ?></dt>
-             <dd class="runningjob-<?php echo $jobId; ?>-bytes"></dd>
-             <dt><?php echo $this->translate('Avg Speed'); ?></dt>
-             <dd class="runningjob-<?php echo $jobId; ?>-avgbytes_sec"></dd>
-             <dt><?php echo $this->translate('Speed'); ?></dt>
-             <dd class="runningjob-<?php echo $jobId; ?>-lastbytes_sec"></dd>
-          </dl>
-             
-             $('.runningjob-' + jobId + '-files').html(data.files);
-             $('.runningjob-' + jobId + '-type').html(data.type);
-             if (data.bytes != 0) {
-             	$('.runningjob-' + jobId + '-bytes').html(formatBytesExt(data.bytes));
-             } else {
-            	 $('.runningjob-' + jobId + '-bytes').html('0 B');
-             }
-             if (data.avgbytes_sec != 0) {
-                 $('.runningjob-' + jobId + '-avgbytes_sec').html(formatBytesExt(data.avgbytes_sec, true) + '/s');
-             } else {
-                 $('.runningjob-' + jobId + '-avgbytes_sec').html('0 B/s');
-             }
-             if (data.lastbytes_sec != 0) {
-                 $('.runningjob-' + jobId + '-lastbytes_sec').html(formatBytesExt(data.lastbytes_sec, true) + '/s');
-             } else {
-                 $('.runningjob-' + jobId + '-lastbytes_sec').html('0 B/s');
-             }**/
+            if (Object.keys(data).length >= 1) {
+               $(Object.keys(data)).each(function(key, jobId) {
+                  $('.running-job-container').html(
+                     $('<dl>').addClass('dl-horizontal').append(
+                        $('<dt>').html('<?php echo $this->translate('Client'); ?>'),
+                        $('<dd>').html(data[jobId].client),
+                        $('<dt>').html('<?php echo $this->translate('Type'); ?>'),
+                        $('<dd>').html(data[jobId].type),
+                        $('<dt>').html('<?php echo $this->translate('Files processed'); ?>'),
+                        $('<dd>').html(data[jobId].files),
+                        $('<dt>').html('<?php echo $this->translate('Bytes processed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].bytes)),
+                        $('<dt>').html('<?php echo $this->translate('Avg Speed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].avgbytes_sec, true) + '/s'),
+                        $('<dt>').html('<?php echo $this->translate('Speed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].lastbytes_sec, true) + '/s'),
+                        $('<hr>')
+                     ) 
+                  );
+               });
+            } else {
+                $('.running-job-container').html('Aktuell laufen keine Jobs.');
+            }   
          }
       });
    }
