@@ -146,7 +146,7 @@ $this->headTitle($title);
                   );
                });
             } else {
-                $('.running-job-container').html('Aktuell laufen keine Jobs.');
+                $('.running-job-container').html('<?php echo $this->translate('No jobs running.'); ?>');
             }   
          }
       });
