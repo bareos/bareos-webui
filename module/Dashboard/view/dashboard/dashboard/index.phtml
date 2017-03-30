@@ -126,8 +126,9 @@ $this->headTitle($title);
          timeout: 10000,
          success: function(data) {
             if (Object.keys(data).length >= 1) {
+            	$('.running-job-container').html('');
                $(Object.keys(data)).each(function(key, jobId) {
-                  $('.running-job-container').html(
+                  $('.running-job-container').append(
                      $('<dl>').addClass('dl-horizontal').append(
                         $('<dt>').html('<?php echo $this->translate('Client'); ?>'),
                         $('<dd>').html(data[jobId].client),
