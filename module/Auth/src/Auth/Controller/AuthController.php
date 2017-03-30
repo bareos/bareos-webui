@@ -102,7 +102,24 @@ class AuthController extends AbstractActionController
                   }
 
                   if(array_key_exists('obsarch', $dird_version)) {
-                     $dird_arch = $dird_version['obsarch'];
+                     if(preg_match("/ubuntu/i", $dird_dist) && $dird_version['obsarch'] == "x86_64") {
+                        $dird_arch = "amd64";
+                     }
+                     elseif(preg_match("/debian/i", $dird_dist) && $dird_version['obsarch'] == "x86_64") {
+                        $dird_arch = "amd64";
+                     }
+                     elseif(preg_match("/windows/i", $dird_dist) && $dird_version['obsarch'] == "Win32") {
+                        $dird_arch = "32";
+                     }
+                     elseif(preg_match("/windows/i", $dird_dist) && $dird_version['obsarch'] == "Win64") {
+                        $dird_arch = "64";
+                     }
+                     else {
+                        $dird_arch = $dird_version['obsarch'];
+                     }
+                  }
+                  else {
+                     $dird_arch = null;
                   }
 
                   if(array_key_exists('version', $dird_version)) {
@@ -169,7 +186,13 @@ class AuthController extends AbstractActionController
                }
 
                if($this->params()->fromQuery('req')) {
-                  return $this->redirect()->toUrl($this->params()->fromQuery('req'));
+                  $redirect = $this->params()->fromQuery('req');
+                  $request = $this->getRequest();
+                  $request->setUri($redirect);
+                  if($routeToBeMatched = $this->getServiceLocator()->get('Router')->match($request)) {
+                     return $this->redirect()->toUrl($this->params()->fromQuery('req'));
+                  }
+                  return $this->redirect()->toRoute('dashboard', array('action' => 'index'));
                }
                else {
                   return $this->redirect()->toRoute('dashboard', array('action' => 'index'));

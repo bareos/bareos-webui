@@ -153,8 +153,8 @@ class JobController extends AbstractActionController
 
       try {
          $this->bsock = $this->getServiceLocator()->get('director');
-         $job = $this->getJobModel()->getJob($this->bsock, $jobid);
-         $joblog = $this->getJobModel()->getJobLog($this->bsock, $jobid);
+         //$job = $this->getJobModel()->getJob($this->bsock, $jobid);
+         //$joblog = $this->getJobModel()->getJobLog($this->bsock, $jobid);
          $this->bsock->disconnect();
       }
       catch(Exception $e) {
@@ -162,8 +162,8 @@ class JobController extends AbstractActionController
       }
 
       return new ViewModel(array(
-         'job' => $job,
-         'joblog' => $joblog,
+         //'job' => $job,
+         //'joblog' => $joblog,
          'jobid' => $jobid
       ));
    }
@@ -419,8 +419,9 @@ class JobController extends AbstractActionController
             $jobs_c = $this->getJobModel()->getJobsByType($this->bsock, 'c'); // Copy Job
             $jobs_g = $this->getJobModel()->getJobsByType($this->bsock, 'g'); // Migration Job
             $jobs_O = $this->getJobModel()->getJobsByType($this->bsock, 'O'); // Always Incremental Consolidate Job
+            $jobs_V = $this->getJobModel()->getJobsByType($this->bsock, 'V'); // Verify Job
             $result = array_merge(
-               $jobs_B,$jobs_D,$jobs_A,$jobs_c,$jobs_g,$jobs_O
+               $jobs_B,$jobs_D,$jobs_A,$jobs_c,$jobs_g,$jobs_O,$jobs_V
             );
          }
          catch(Exception $e) {
