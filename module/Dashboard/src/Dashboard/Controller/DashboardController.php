@@ -66,6 +66,7 @@ class DashboardController extends AbstractActionController
          $waiting = $this->getJobs("waiting", 1, null);
          $successful = $this->getJobs("successful", 1, null);
          $unsuccessful = $this->getJobs("unsuccessful", 1, null);
+         $currentRunning = $this->getJobModel()->getRunningJobStatus($this->bsock);
          $this->bsock->disconnect();
       }
       catch(Exception $e) {
@@ -78,6 +79,7 @@ class DashboardController extends AbstractActionController
             'waitingJobs' => $waiting,
             'successfulJobs' => $successful,
             'unsuccessfulJobs' => $unsuccessful,
+            'currentRunningJobs' => $currentRunning,
          )
       );
    }

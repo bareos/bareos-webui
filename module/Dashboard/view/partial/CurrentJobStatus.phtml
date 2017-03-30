@@ -1,0 +1,46 @@
+<?php
+/**
+ *
+ * bareos-webui - Bareos Web-Frontend
+ *
+ * @link      https://github.com/bareos/bareos-webui for the canonical source repository
+ * @copyright Copyright (c) 2013-2016 Bareos GmbH & Co. KG (http://www.bareos.org/)
+ * @license   GNU Affero General Public License (http://www.gnu.org/licenses/)
+ * @author    Tobias Ehrig
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+?>
+<?php foreach ($this->currentRunningJobs as $jobId => $runningJob): ?>
+   <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><?php echo $this->translate('Current running job'); ?> <?php echo $runningJob['client']; ?></h3>
+      </div>
+      <div class="panel-body">   
+         <dl class="dl-horizontal" data-runningjob-id="<?php echo $jobId; ?>">
+            <dt><?php echo $this->translate('Type'); ?></dt>
+            <dd class="runningjob-<?php echo $jobId; ?>-type"></dd>
+            <dt><?php echo $this->translate('Files processed'); ?></dt>
+            <dd class="runningjob-<?php echo $jobId; ?>-files"></dd>
+            <dt><?php echo $this->translate('Bytes processed'); ?></dt>
+            <dd class="runningjob-<?php echo $jobId; ?>-bytes"></dd>
+            <dt><?php echo $this->translate('Avg Speed'); ?></dt>
+            <dd class="runningjob-<?php echo $jobId; ?>-avgbytes_sec"></dd>
+            <dt><?php echo $this->translate('Speed'); ?></dt>
+            <dd class="runningjob-<?php echo $jobId; ?>-lastbytes_sec"></dd>
+         </dl>
+      </div>
+   </div>
+<?php endforeach; ?>
