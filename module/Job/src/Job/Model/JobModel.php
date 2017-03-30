@@ -160,6 +160,50 @@ class JobModel
          throw new \Exception('Missing argument.');
       }
    }
+   
+   public function getRunningJobStatus(&$bsock = null, $jobid = null)
+   {
+       if(!isset($bsock)) {
+           throw new \Exception('Missing argument.');
+       }
+       $values = [];
+        
+       if (is_null($jobid)) {
+           $runningJobs = $this->getJobsByStatus($bsock, null, 'R');
+       } else {
+           $runningJobs[] = ['jobid' => $jobid];
+       }
+        
+       foreach ($runningJobs as $job) {
+            
+           $cmd = 'status jobid=' . $job['jobid'];
+           $result = $bsock->send_command($cmd, 0, null);
+            
+           // Match lines
+           $regex = 'Writing:\s(.+)\sBackup\sjob\s(.+)\sJobId=([\d]+)\sVolume="(.+)"\n(.*)\n(.*)\n\s+Files=([\d,]+)\sBytes=([\d,]+)\sAveBytes\/sec=([\d,]+)\sLastBytes\/sec=([\d,]+)\s';
+            
+           $values[$job['jobid']] = [];
+           $matches = [];
+            
+           if (preg_match_all('/' . $regex . '/', $result, $matches, PREG_SET_ORDER)) {
+               foreach ($matches as $job) {
+                   $tmpJobId = $job[3];
+                   $values[$tmpJobId]['type']   = $job[1];
+                   $values[$tmpJobId]['client'] = $job[2];
+                   $values[$tmpJobId]['volume'] = $job[4];
+                   $values[$tmpJobId]['files']  = str_replace(",", "", $job[7]);
+                   $values[$tmpJobId]['bytes']  = str_replace(",", "", $job[8]);
+                   $values[$tmpJobId]['avgbytes_sec']  = str_replace(",", "", $job[9]);
+                   $values[$tmpJobId]['lastbytes_sec']  = str_replace(",", "", $job[10]);
+                    
+                   if (!is_null($jobid) && $jobid == $job[3]) {
+                       return $values[$tmpJobId];
+                   }
+               }
+           }
+       }
+       return $values;
+   }
 
    public function getRestoreJobs(&$bsock=null)
    {
