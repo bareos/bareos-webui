@@ -5,3 +5,6 @@ config.ini
 Makefile
 config.log
 config.status
+/.buildpath
+/.project
+/.settings/

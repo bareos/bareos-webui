@@ -65,6 +65,7 @@ class DashboardController extends AbstractActionController
          $running = $this->getJobs("running", 1, null);
          $waiting = $this->getJobs("waiting", 1, null);
          $successful = $this->getJobs("successful", 1, null);
+         $currentRunning = $this->getJobModel()->getRunningJobStatus($this->bsock);
          $unsuccessful = $this->getJobs("unsuccessful", 1, null);
          $this->bsock->disconnect();
       }
@@ -145,6 +146,16 @@ class DashboardController extends AbstractActionController
          try {
             $this->bsock = $this->getServiceLocator()->get('director');
             $result = $this->getJobModel()->getJobsLastStatus($this->bsock);
+            $this->bsock->disconnect();
+         }
+         catch(Exception $e) {
+            echo $e->getMessage();
+         }
+      }
+      elseif($data == "jobsrunning") {
+         try {
+            $this->bsock = $this->getServiceLocator()->get('director');
+            $result = $this->getJobModel()->getRunningJobStatus($this->bsock);
             $this->bsock->disconnect();
          }
          catch(Exception $e) {

@@ -34,6 +34,7 @@ $this->headTitle($title);
 
    <div class="col-md-4">
       <?php echo $this->partial('JobsPast24h'); ?>
+      <?php echo $this->partial('CurrentJobStatus'); ?>
       <?php echo $this->partial('LastDirectorMessages'); ?>
    </div>
 
@@ -49,6 +50,7 @@ $this->headTitle($title);
    echo $this->headScript()->prependFile($this->basePath() . '/js/jqplot.barRenderer.min.js');
    echo $this->headScript()->prependFile($this->basePath() . '/js/jqplot.pieRenderer.min.js');
    echo $this->headScript()->prependFile($this->basePath() . '/js/jquery.jqplot.min.js');
+   echo $this->headScript()->prependFile($this->basePath() . '/js/bareos.formatters.js');
    echo $this->headLink()->prependStylesheet($this->basePath() . '/css/jquery.jqplot.min.css');
 
    echo $this->headScript()->prependFile($this->basePath() . '/js/datatables.plugins.js');
@@ -116,6 +118,41 @@ $this->headTitle($title);
       });
    }
 
+   function getCurrentRunningJob() {
+	  
+      $.ajax({
+         url : '<?php echo $this->url('dashboard', array('action' => 'getData'), null) . '?data=jobsrunning'; ?>',
+         dataType: 'json',
+         timeout: 10000,
+         success: function(data) {
+            if (Object.keys(data).length >= 1) {
+            	$('.running-job-container').html('');
+               $(Object.keys(data)).each(function(key, jobId) {
+                  $('.running-job-container').append(
+                     $('<dl>').addClass('dl-horizontal').append(
+                        $('<dt>').html('<?php echo $this->translate('Client'); ?>'),
+                        $('<dd>').html(data[jobId].client),
+                        $('<dt>').html('<?php echo $this->translate('Type'); ?>'),
+                        $('<dd>').html(data[jobId].type),
+                        $('<dt>').html('<?php echo $this->translate('Files processed'); ?>'),
+                        $('<dd>').html(data[jobId].files),
+                        $('<dt>').html('<?php echo $this->translate('Bytes processed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].bytes)),
+                        $('<dt>').html('<?php echo $this->translate('Avg Speed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].avgbytes_sec, true) + '/s'),
+                        $('<dt>').html('<?php echo $this->translate('Speed'); ?>'),
+                        $('<dd>').html(formatBytesExt(data[jobId].lastbytes_sec, true) + '/s'),
+                        $('<hr>')
+                     ) 
+                  );
+               });
+            } else {
+                $('.running-job-container').html('<?php echo $this->translate('No jobs running.'); ?>');
+            }   
+         }
+      });
+   }
+   
    $(document).ready(
       function() {
          setDtTextDomain('<?php echo $this->basePath() . '/js/locale'; ?>');
@@ -124,8 +161,10 @@ $this->headTitle($title);
          chart1();
 
          getDirectorMessages();
-
+         getCurrentRunningJob();
+         
          setInterval('getDirectorMessages()', 30000);
+         setInterval('getCurrentRunningJob()', 5000);
 
          var table_jobs_last_status = $('#jobs-last-status').DataTable({
             "ajax": {
