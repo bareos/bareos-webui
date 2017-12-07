@@ -3,11 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
-from selenium.common.exceptions import NoSuchElementException, NoAlertPresentException, TimeoutException, WebDriverException, ElementNotInteractableException, InvalidSelectorException
+from selenium.common.exceptions import NoSuchElementException, NoAlertPresentException, TimeoutException, WebDriverException, ElementNotInteractableException, InvalidSelectorException, ElementNotVisibleException
 import unittest, time, re, sys, os
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 
@@ -30,7 +29,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         
         
         driver = self.driver
-        actions = ActionChains(self.driver)
         # LOGGING IN:
         driver.get(self.base_url + "/bareos-webui/auth/login")
         driver.find_element_by_xpath("//button[@type='button']").click()
@@ -44,43 +42,30 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_xpath("//input[@id='submit']").click()
         
         # CHANGING TO RESTORE TAB:
-        self.click_and_wait("/bareos-webui/restore/")
+        self.wait_for_url("/bareos-webui/restore/")
         
         
-        
+        time.sleep(2)
         # SELECTING CLIENT:
         # Selects the correct client
-        self.click_element_and_wait("(//button[@type='button'])[3]")
-        driver.find_element_by_css_selector("span.text").click()
-        # self.click_element_and_wait("/html/body/div[2]/div/div/form/div[1]/div[1]/p[1]/div/div/ul/li[1]/a/span[1]")
+        self.wait_for_element(By.XPATH, "//p/div/button").click()
+        # driver.find_element_by_xpath("//p/div/button").click()
+        self.wait_for_element(By.CSS_SELECTOR, "span.text").click()        
+             
         
-        # driver.find_element_by_link_text(client).click()
-        
-        
-        # CLICK ON FILE VIA XPATH-POSITION:
-        # to be replaced by click_element_and_wait
-        # self.click_element_and_wait("//a[contains(text(),'/')]")
-        # driver.find_element_by_xpath("//a[contains(text(),'/')]").click()
-        # driver.find_element_by_xpath("//a[contains(text(),'/')]").click()
-        # time.sleep(t)
-        element = self.wait_for_element(By.XPATH, "//a[contains(text(),'/')]")
-        # element = driver.find_element_by_xpath("//a[contains(text(),'/')]")
-        print "element %s - %s" % (element, dir(element))
-        
-        # actions.double_click(element)
-        # actions.perform()
-        element.send_keys(Keys.ARROW_RIGHT)
-        time.sleep(t)
-        
-        
-        self.click_element_and_wait("//a[contains(text(),'etc/')]")
-        self.click_element_and_wait("//a[contains(text(),'bareos/')]")
-        self.click_element_and_wait("//a[contains(text(),'bconsole.conf')]")
-        
-        
+        # FILE-SELECTION:
+        # Clicks on file and navigates through the tree
+        # by using the arrow-keys.
+                
+        self.wait_for_element(By.XPATH, "//a[contains(text(),'/')]").send_keys(Keys.ARROW_RIGHT)
+        self.wait_for_element(By.XPATH, "//a[contains(text(),'etc/')]").send_keys(Keys.ARROW_RIGHT)
+        self.wait_for_element(By.XPATH, "//a[contains(text(),'bareos/')]").send_keys(Keys.ARROW_RIGHT)
+        self.wait_for_element(By.XPATH, "//a[contains(text(),'bconsole.conf')]").click()
+        # send_keys(Keys.ENTER)
+
         # CONFIRMATION:
         # Clicks on 'submit'
-        self.click_element_and_wait("//input[@id='submit']")
+        self.wait_for_element(By.XPATH, "//input[@id='submit']").click()
         # Confirms alert that has text "Are you sure ?"
         self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
         
@@ -93,7 +78,7 @@ class WebuiSeleniumTest(unittest.TestCase):
                 
     # This Method clicks and URL and waits
     # until the URL matches the desired URL.
-    def click_and_wait(self, what):
+    def wait_for_url(self, what):
         start_time = time.time()
         i=0
         # the url to compare the current url against
@@ -123,37 +108,29 @@ class WebuiSeleniumTest(unittest.TestCase):
         timer = time.time() - start_time
         print url + " loaded after %s seconds." % timer
         
-    # Works like click_and_wait but also
+    # Works like wait_for_url but also
     # works with non-url's: the xpath
     # must be given as argument when calling.
     def click_element_and_wait(self, xpath):
-        i=0
-        t=0
-        found=False
-        # while i<6 and found=False:
-        while i<6 and t==0:
-            time.sleep(2)
+        i=10
+        element=None
+        while i>0 and element is None:
             try:
-                self.driver.find_element_by_xpath(xpath)
+                element = self.driver.find_element_by_xpath(xpath)
             except ElementNotInteractableException:
                 print "Waiting since %s sec" % i
-            # except NoSuchElementException:
-           #      print "Waiting ince %s sec" % i
-           #      i=i+1
-            else:
-                 print "Try %s succeeded" % xpath
-                 self.driver.find_element_by_xpath(xpath).click()
-                 time.sleep(2)
-                 t=1
-                 # found=True
-            i=i+1
-            if(i==6):
-                print "Timeout while loading %s ." % xpath
-                
-        if(i==6):
-            return False
+                time.sleep(1)
+            except NoSuchElementException:
+                print "Waiting ince %s sec" % i
+                time.sleep(1)
+            i=i-1
+                    
+        if(i==0):
+            print "Timeout while loading %s ." % xpath
+            return None
         else:    
             print "Element loaded after %s seconds." %i
+            return element
 
     def wait_for_element(self, by, value):
         i=10
@@ -161,21 +138,26 @@ class WebuiSeleniumTest(unittest.TestCase):
         # while i<6 and found=False:
         while i>0 and element is None:
             try:
-                element = self.driver.find_element(by, value)
+                tmp_element = self.driver.find_element(by, value)
+                if tmp_element.is_displayed():
+                    element = tmp_element
             except ElementNotInteractableException:
                 print "Waiting since %s sec" % i
                 time.sleep(1)
             except NoSuchElementException:
                 print "NSE Waiting ince %s sec" % i                
                 time.sleep(1)
+            except ElementNotVisibleException:
+                print "NSE Waiting ince %s sec" % i                
+                time.sleep(1)
             i=i-1
                 
         if(i==0):
-            print "Timeout while loading %s ." % xpath
-            return None
-        else:    
+            print "Timeout while loading %s ." % value
+        else:
             print "Element loaded after %s seconds." %i
-            return element
+            print element
+        return element
 
         
     # def wait_for_element(self, what):
