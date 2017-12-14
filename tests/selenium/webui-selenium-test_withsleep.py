@@ -64,6 +64,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_link_text("Logout").click()
         
     def test_restore(self):
+        path.spit('/')
         driver = self.driver
         driver.get(self.base_url + "/bareos-webui/auth/login")
         driver.find_element_by_xpath("//button[@type='button']").click()
@@ -160,6 +161,9 @@ if __name__ == "__main__":
 
     # get username from environment if set
     # otherwise use defaults
+    restorefile = os.environ.get('RESTOREFILE')
+    if not restorefile:
+        restorefile = '/usr/sbin/bconsole'
     username = os.environ.get('USERNAME')
     password = os.environ.get('PASSWORD')
     if not username:

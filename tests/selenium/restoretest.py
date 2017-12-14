@@ -49,14 +49,12 @@ class WebuiSeleniumTest(unittest.TestCase):
         # SELECTING CLIENT:
         # Selects the correct client
         self.wait_for_element(By.XPATH, "//p/div/button").click()
-        # driver.find_element_by_xpath("//p/div/button").click()
-        self.wait_for_element(By.CSS_SELECTOR, "span.text").click()        
+        self.wait_for_element(By.CSS_SELECTOR, "span.text").click()
              
         
         # FILE-SELECTION:
         # Clicks on file and navigates through the tree
         # by using the arrow-keys.
-                
         self.wait_for_element(By.XPATH, "//a[contains(text(),'/')]").send_keys(Keys.ARROW_RIGHT)
         self.wait_for_element(By.XPATH, "//a[contains(text(),'etc/')]").send_keys(Keys.ARROW_RIGHT)
         self.wait_for_element(By.XPATH, "//a[contains(text(),'bareos/')]").send_keys(Keys.ARROW_RIGHT)
@@ -68,13 +66,10 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_for_element(By.XPATH, "//input[@id='submit']").click()
         # Confirms alert that has text "Are you sure ?"
         self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
-        
-        
+
         # LOGOUT:
-        # Opens the dropdown menue and chooses logout        
-        driver.find_element_by_link_text(username).click()
-        time.sleep(2)
-        driver.find_element_by_link_text("Logout").click()
+        self.wait_for_element(By.LINK_TEXT, username).click()
+        self.wait_for_element(By.LINK_TEXT, "Logout").click()
                 
     # This Method clicks and URL and waits
     # until the URL matches the desired URL.
@@ -107,35 +102,10 @@ class WebuiSeleniumTest(unittest.TestCase):
                 return True
         timer = time.time() - start_time
         print url + " loaded after %s seconds." % timer
-        
-    # Works like wait_for_url but also
-    # works with non-url's: the xpath
-    # must be given as argument when calling.
-    def click_element_and_wait(self, xpath):
-        i=10
-        element=None
-        while i>0 and element is None:
-            try:
-                element = self.driver.find_element_by_xpath(xpath)
-            except ElementNotInteractableException:
-                print "Waiting since %s sec" % i
-                time.sleep(1)
-            except NoSuchElementException:
-                print "Waiting ince %s sec" % i
-                time.sleep(1)
-            i=i-1
-                    
-        if(i==0):
-            print "Timeout while loading %s ." % xpath
-            return None
-        else:    
-            print "Element loaded after %s seconds." %i
-            return element
 
     def wait_for_element(self, by, value):
         i=10
         element=None
-        # while i<6 and found=False:
         while i>0 and element is None:
             try:
                 tmp_element = self.driver.find_element(by, value)
@@ -159,12 +129,6 @@ class WebuiSeleniumTest(unittest.TestCase):
             print element
         return element
 
-        
-    # def wait_for_element(self, what):
-    #     element = WebDriverWait(driver, 10).until(
-    #         EC.element_to_be_clickable((By.XPATH, what))
-    #     )
-
     def is_alert_present(self):
         try: self.driver.switch_to_alert()
         except NoAlertPresentException as e: return False
@@ -187,9 +151,14 @@ class WebuiSeleniumTest(unittest.TestCase):
 
 if __name__ == "__main__":
 
-    # get username from environment if set
+    # get attributes from environment if set
     # otherwise use defaults
-    client = "bareos-fd"
+    restorefile = os.environ.get('RESTOREFILE')
+    if not restorefile:
+        restorefile = '/usr/sbin/bconsole'
+    client = os.environ.get('CLIENT')
+    if not client:
+        client = "  bareos-fd"
     username = os.environ.get('USERNAME')
     password = os.environ.get('PASSWORD')
     if not username:
