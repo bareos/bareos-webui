@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 class WebuiSeleniumTest(unittest.TestCase):
 
     def setUp(self):
-        if browser.matches("chrome"):
+        if browser == "chrome":
             d = DesiredCapabilities.CHROME
             d['loggingPrefs'] = { 'browser':'ALL' }
             self.driver = webdriver.Chrome('/usr/local/sbin/chromedriver')
@@ -50,7 +50,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_for_url("/bareos-webui/restore/")
         self.logout()
 
-    def est_restore(self):
+    def test_restore(self):
 
         pathlist = restorefile.split('/')
         driver = self.driver
@@ -86,7 +86,11 @@ class WebuiSeleniumTest(unittest.TestCase):
 
     def login(self):
         driver = self.driver
-        driver.get(self.base_url + "/bareos-webui/auth/login")
+        # on windows we have a different baseurl
+        if os.getenv('DIST') == "windows":
+            driver.get(self.base_url + "/auth/login")
+        else:
+            driver.get(self.base_url + "/bareos-webui/auth/login")
         Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
         driver.find_element_by_name("consolename").clear()
         driver.find_element_by_name("consolename").send_keys(username)
@@ -97,8 +101,11 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_xpath("//input[@id='submit']").click()
 
     def logout(self):
-        self.wait_for_element(By.LINK_TEXT, username).click()
+        time.sleep(2)
+        self.wait_for_element(By.CSS_SELECTOR, "a.dropdown-toggle").click()
+        # self.wait_for_element(By.CSS_SELECTOR, "a.dropdown-toggle").send_keys(Keys.Return)
         self.wait_for_element(By.LINK_TEXT, "Logout").click()
+        time.sleep(2)
 
     def wait_for_url(self, what):
         # This Method clicks an URL and waits
@@ -117,44 +124,18 @@ class WebuiSeleniumTest(unittest.TestCase):
             try:
                 self.driver.find_element_by_xpath(xpath)
             except (NoSuchElementException, ElementNotInteractableException) as e:
-                logging.debug("error %s", i)
+                logging.info("error %s", i)
             else:
                 time.sleep(1)
                 self.driver.find_element_by_xpath(xpath).click()
                 timer = time.time() - start_time
-                logging.debug(url + " loaded after %s seconds." % timer)
+                logging.info("Loaded after %s seconds." % timer)
                 return True
             time.sleep(1)
             i=i+1
             if(i==10):
-                logging.debug("Generated timeout while loading %s", what)
+                logging.info("Generated timeout while loading %s", what)
                 return False
-
-    def neu_wait_for_url(self, value):
-        i=10
-        element="//a[contains(@href, '%s')]" % value
-        while i>0 and element is None:
-            try:
-                tmp_element = self.driver.find_element(By.XPATH, element)
-                if tmp_element.is_displayed():
-                    element = tmp_element
-            except ElementNotInteractableException:
-                print "Waiting since %s sec" % (11-i)
-                time.sleep(1)
-            except NoSuchElementException:
-                print "NSE Waiting since %s sec" % (11-i)
-                time.sleep(1)
-            except ElementNotVisibleException:
-                print "NSE Waiting since %s sec" % (11-i)
-                time.sleep(1)
-            i=i-1
-        
-        if(i==0):
-            print "Timeout while loading %s ." % value
-        else:
-            print "Element loaded after %s seconds." % (11-i)
-            print element
-        return element
 
     def wait_for_element(self, by, value):
         i=10
@@ -165,20 +146,20 @@ class WebuiSeleniumTest(unittest.TestCase):
                 if tmp_element.is_displayed():
                     element = tmp_element
             except ElementNotInteractableException:
-                logging.debug(element, "Waiting since %s sec" % (11-i))
+                logging.info("Element %s not interactable", value)
                 time.sleep(1)
             except NoSuchElementException:
-                logging.debug(element, "NSE Waiting since %s sec" % (11-i))
+                logging.info("Element %s not existing", value)
                 time.sleep(1)
             except ElementNotVisibleException:
-                logging.debug(element, "NSE Waiting since %s sec" % (11-i))
+                logging.info("Element %s not visible", value)
                 time.sleep(1)
             i=i-1
 
         if(i==0):
-            logging.debug(element, "Timeout while loading %s ." % value)
+            logging.info("Timeout while loading %s .", value)
         else:
-            logging.debug(element, "Element loaded after %s seconds." % (11-i))
+            logging.info("Element loaded after %s seconds." % (11-i))
         return element
 
     def is_alert_present(self):
@@ -205,7 +186,7 @@ class WebuiSeleniumTest(unittest.TestCase):
 
 if __name__ == "__main__":
     # Configure the logger
-    logging.basicConfig(format='%(levelname)s %(module)s.%(funcName)s: %(message)s', level=logging.INFO)
+    logging.basicConfig(filename='webui-selenium-test.log', level=logging.INFO)
     logger = logging.getLogger()
 
     # Get attributes as environment variables,
