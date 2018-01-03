@@ -3,11 +3,11 @@
 
 [![version][version-badge]][CHANGELOG] [![license][license-badge]][LICENSE]
 
-Bareos WebUI is a PHP-Frontend to manage [Bareos](http://www.bareos.org/) over the web.
+Bareos WebUI is a PHP-Frontend to monitor and manage [Bareos](http://www.bareos.org/) over the web.
 
 ### CHANGELOG
 
-[https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md](https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md)
+See: [https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md](https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md)
 
 ### INSTALLATION
 
@@ -22,7 +22,7 @@ The Bareos project offers two mailing lists: bareos-users and bareos-devel.
 
 ### BUGTRACKER
 
-[http://bugs.bareos.org](http://bugs.bareos.org)
+See: [http://bugs.bareos.org](http://bugs.bareos.org)
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
