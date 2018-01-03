@@ -5,6 +5,10 @@
 
 Bareos WebUI is a PHP-Frontend to manage [Bareos](http://www.bareos.org/) over the web.
 
+### CHANGELOG
+
+[https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md](https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md)
+
 ### INSTALLATION
 
 See: [https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md](https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md)
