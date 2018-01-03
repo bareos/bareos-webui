@@ -7,22 +7,29 @@ Bareos WebUI is a PHP-Frontend to monitor and manage [Bareos](http://www.bareos.
 
 ### CHANGELOG
 
-See: [https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md](https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md)
+Please see [CHANGELOG.md](https://github.com/bareos/bareos-webui/blob/master/CHANGELOG.md).
 
 ### INSTALLATION
 
-See: [https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md](https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md)
+Please see [README-INSTALLATION.md](https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md).
 
-### MAILINGLISTS
+### CONTRIBUTING
 
-The Bareos project offers two mailing lists: bareos-users and bareos-devel.
+Please see [README-CONTRIBUTING.md](https://github.com/bareos/bareos-webui/blob/master/doc/README-CONTRIBUTING.md).
+
+### QUESTIONS AND FEEDBACK
+
+Online documentation can be found at [http://doc.bareos.org](http://doc.bareos.org).
+
+Questions that are not addressed in the manual should be directed to the appropriate mailing list.
+The Bareos project offers two mailing lists, bareos-users and bareos-devel.
 
  * bareos-users@googlegroups.com
  * bareos-devel@googlegroups.com
 
 ### BUGTRACKER
 
-See: [http://bugs.bareos.org](http://bugs.bareos.org)
+Please see [http://bugs.bareos.org](http://bugs.bareos.org).
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
