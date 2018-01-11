@@ -3,11 +3,7 @@ import logging, os, re, sys, time, unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import WebDriverException
-from selenium.common.exceptions import ElementNotInteractableException
+from selenium.common.exceptions import WebDriverException, ElementNotInteractableException, ElementNotVisibleException, TimeoutException, NoAlertPresentException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select, WebDriverWait
 
@@ -22,7 +18,7 @@ class WebuiSeleniumTest(unittest.TestCase):
             d = DesiredCapabilities.FIREFOX
             d['loggingPrefs'] = { 'browser':'ALL' }
             fp = webdriver.FirefoxProfile()
-            fp.set_preference('webdriver.log.file', os.getcwd() + '/firefox_console')
+            fp.set_preference('webdriver.log.file', os.getcwd() + '/firefox_console.log')
             self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(4)
         self.base_url = "http://%s" % targethost
@@ -31,7 +27,7 @@ class WebuiSeleniumTest(unittest.TestCase):
     
     def test_login(self):
         self.login()
-        time.sleep(3)
+        time.sleep(0.5+t)
         self.logout()
 
     def test_menue(self):
@@ -41,32 +37,31 @@ class WebuiSeleniumTest(unittest.TestCase):
             driver.get(self.base_url + "/")
         else:
             driver.get(self.base_url + "/bareos-webui/")
+
         self.login()
-        self.wait_for_url("/bareos-webui/director/")
-        self.wait_for_url("/bareos-webui/schedule//")
-        self.wait_for_url("/bareos-webui/schedule/status/")
-        self.wait_for_url("/bareos-webui/storage/")
-        self.wait_for_url("/bareos-webui/client/")
-        self.wait_for_url("/bareos-webui/restore/")
+        self.wait_for_url('/bareos-webui/director/').click()
+        self.wait_for_url("/bareos-webui/schedule/").click()
+        self.wait_for_url("/bareos-webui/schedule/status/").click()
+        self.wait_for_url("/bareos-webui/storage/").click()
+        self.wait_for_url("/bareos-webui/client/").click()
+        self.wait_for_url("/bareos-webui/restore/").click()
         self.logout()
 
     def test_restore(self):
-
         pathlist = restorefile.split('/')
         driver = self.driver
+
         # LOGGING IN:
         self.login()
 
         # CHANGING TO RESTORE TAB:
-        self.wait_for_url("/bareos-webui/restore/")
-        time.sleep(2)
-
+        self.wait_for_url("/bareos-webui/restore/").click()
+        
         # SELECTING CLIENT:
         # Selects the correct client
-        self.wait_for_element(By.XPATH, "//p/div/button").click()
-        self.wait_for_element(By.CSS_SELECTOR, "span.text").click()
-        time.sleep(2)
-
+        self.wait_for_element(By.XPATH, "(//button[@type='button'])[3]").click()
+        self.wait_for_element(By.LINKT_TEXT, client).click()
+        
         # FILE-SELECTION:
         # Clicks on file and navigates through the tree
         # by using the arrow-keys.
@@ -84,14 +79,17 @@ class WebuiSeleniumTest(unittest.TestCase):
         # LOGOUT:
         self.logout()
 
+
     def login(self):
         driver = self.driver
+
         # on windows we have a different baseurl
         if os.getenv('DIST') == "windows":
             driver.get(self.base_url + "/auth/login")
         else:
             driver.get(self.base_url + "/bareos-webui/auth/login")
         Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
+
         driver.find_element_by_name("consolename").clear()
         driver.find_element_by_name("consolename").send_keys(username)
         driver.find_element_by_name("password").clear()
@@ -99,63 +97,37 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
         driver.find_element_by_link_text("English").click()
         driver.find_element_by_xpath("//input[@id='submit']").click()
+        while ("/bareos-webui/dashboard/" not in self.driver.current_url):
+            time.sleep(t*0.1)
 
     def logout(self):
-        time.sleep(2)
+        time.sleep(t)
         self.wait_for_element(By.CSS_SELECTOR, "a.dropdown-toggle").click()
-        # self.wait_for_element(By.CSS_SELECTOR, "a.dropdown-toggle").send_keys(Keys.Return)
         self.wait_for_element(By.LINK_TEXT, "Logout").click()
         time.sleep(2)
 
     def wait_for_url(self, what):
-        # This Method clicks an URL and waits
-        # until the URL matches the desired URL.
-        start_time = time.time()
-        i=0
-        # the url to compare the current url against
-        url=self.base_url + what
-        # xpath-reference is generated
-        xpath="//a[contains(@href, '%s')]" % what
-        # while the url is not the desired url
-        # try to click on the xpath element
-        # until the time is more than 10 seconds
-        # and displays the time the test took.
-        while (url not in self.driver.current_url) and i<10:
-            try:
-                self.driver.find_element_by_xpath(xpath)
-            except (NoSuchElementException, ElementNotInteractableException) as e:
-                logging.info("error %s", i)
-            else:
-                time.sleep(1)
-                self.driver.find_element_by_xpath(xpath).click()
-                timer = time.time() - start_time
-                logging.info("Loaded after %s seconds." % timer)
-                return True
-            time.sleep(1)
-            i=i+1
-            if(i==10):
-                logging.info("Generated timeout while loading %s", what)
-                return False
-
+        value="//a[contains(@href, '%s')]" % what
+        time.sleep(t*0.5)
+        return self.wait_for_element(By.XPATH, value)
+        
     def wait_for_element(self, by, value):
         i=10
         element=None
         while i>0 and element is None:
             try:
+                time.sleep(0.5+(t*0.5))
+                logging.info("Loading %s", value)
                 tmp_element = self.driver.find_element(by, value)
                 if tmp_element.is_displayed():
                     element = tmp_element
             except ElementNotInteractableException:
                 logging.info("Element %s not interactable", value)
-                time.sleep(1)
             except NoSuchElementException:
                 logging.info("Element %s not existing", value)
-                time.sleep(1)
             except ElementNotVisibleException:
                 logging.info("Element %s not visible", value)
-                time.sleep(1)
             i=i-1
-
         if(i==0):
             logging.info("Timeout while loading %s .", value)
         else:
@@ -185,7 +157,8 @@ class WebuiSeleniumTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    # Configure the logger
+    # Configure the logger, for information about the timings set it to INFO
+    # Selenium driver itself will write additional debug messages when set to DEBUG
     logging.basicConfig(filename='webui-selenium-test.log', level=logging.INFO)
     logger = logging.getLogger()
 
@@ -194,17 +167,22 @@ if __name__ == "__main__":
     browser = os.environ.get('BROWSER')
     if not browser:
         browser = 'firefox'
+    client = os.environ.get('CLIENT')
+    if not client:
+        client = 'bareos-fd'
     restorefile = os.environ.get('RESTOREFILE')
     if not restorefile:
         restorefile = '/usr/sbin/bconsole'
     username = os.environ.get('USERNAME')
     if not username:
-        username = "admin"
+        username = "citest"
     password = os.environ.get('PASSWORD')
     if not password:
-        password = "secret"
-    t = 3
+        password = "citestpass"
+    t = float(os.environ.get('SLEEPTIME'))
+    if not t:
+        t = 1.0
     targethost = os.environ.get('VM_IP')
     if not targethost:
-        targethost = "10.20.240.49"
+        targethost = "127.0.0.1"
     unittest.main()
