@@ -32,7 +32,7 @@ class WebuiSeleniumTest(unittest.TestCase):
 
     def test_menue(self):
         driver = self.driver
-        # on windows we have a different baseurl
+        # On windows we have a different baseurl
         if os.getenv('DIST') == "windows":
             driver.get(self.base_url + "/")
         else:
@@ -60,7 +60,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         # SELECTING CLIENT:
         # Selects the correct client
         self.wait_for_element(By.XPATH, "(//button[@type='button'])[3]").click()
-        self.wait_for_element(By.LINKT_TEXT, client).click()
+        self.driver.find_element(By.LINK_TEXT, client).click()
         
         # FILE-SELECTION:
         # Clicks on file and navigates through the tree
@@ -179,7 +179,9 @@ if __name__ == "__main__":
     password = os.environ.get('PASSWORD')
     if not password:
         password = "citestpass"
-    t = float(os.environ.get('SLEEPTIME'))
+    t = os.environ.get('SLEEPTIME')
+    if t:
+        t = float(t)
     if not t:
         t = 1.0
     targethost = os.environ.get('VM_IP')
