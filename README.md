@@ -33,5 +33,5 @@ Please see [http://bugs.bareos.org](http://bugs.bareos.org).
 
 [CHANGELOG]: ./CHANGELOG.md
 [LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-18.1.1-blue.svg
+[version-badge]: https://img.shields.io/badge/version-18.1.2-blue.svg
 [license-badge]: https://img.shields.io/badge/license-AGPL--3.0-blue.svg
