@@ -1,5 +1,5 @@
 
-# <img src="https://github.com/bareos/bareos-webui/blob/master/public/img/bareos.png" alt="Bareos WebUI" />
+# <img src="https://github.com/bareos/bareos-webui/raw/bareos-17.2/public/img/bareos.png" alt="Bareos WebUI" />
 
 [![version][version-badge]][CHANGELOG] [![license][license-badge]][LICENSE]
 
