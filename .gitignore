@@ -1,7 +1,0 @@
-composer.lock
-config.ini
-*.swp
-*.cache
-Makefile
-config.log
-config.status

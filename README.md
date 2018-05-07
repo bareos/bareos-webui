@@ -1,26 +1,23 @@
+This repository has been merged into https://github.com/bareos/bareos
 
-# <img src="https://github.com/bareos/bareos-webui/blob/master/public/img/bareos.png" alt="Bareos WebUI" />
+The Bareos project consists of several sub projects. While these subprojects
+have been kept in different git repositories until bareos <= 17.2, we decided
+to merge them all into https://github.com/bareos/bareos
 
-[![version][version-badge]][CHANGELOG] [![license][license-badge]][LICENSE]
+Subprojects:
+  * https://github.com/bareos/bareos (core, daemons) repository hasn't changed,
+    but its content has been moved to the core subdirectory
+    https://github.com/bareos/bareos/tree/master/core/
+  * https://github.com/bareos/bareos-docs (master) =>
+    https://github.com/bareos/bareos/tree/master/docs/
+  * https://github.com/bareos/bareos-regress (master) => https://github.com/bareos/bareos/tree/master/regress/
+  * https://github.com/bareos/bareos-vmware (master) => https://github.com/bareos/bareos/tree/master/vmware/
+  * https://github.com/bareos/bareos-webui (master) => https://github.com/bareos/bareos/tree/master/webui/
+  * https://github.com/bareos/python-bareos (master) => https://github.com/bareos/bareos/tree/master/python-bareos/
 
-Bareos WebUI is a PHP-Frontend to manage [Bareos](http://www.bareos.org/) over the web.
+We only merged the master branches, so all those plus all future branches from
+bareos-18.2 onwards can be found there. The old branches (bareos <= 17.2) will
+be kept and maintained in the old repositories.
 
-### INSTALLATION
 
-See: [https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md](https://github.com/bareos/bareos-webui/blob/master/doc/README-INSTALLATION.md)
 
-### MAILINGLISTS
-
-The Bareos project offers two mailing lists: bareos-users and bareos-devel.
-
- * bareos-users@googlegroups.com
- * bareos-devel@googlegroups.com
-
-### BUGTRACKER
-
-[http://bugs.bareos.org](http://bugs.bareos.org)
-
-[CHANGELOG]: ./CHANGELOG.md
-[LICENSE]: ./LICENSE
-[version-badge]: https://img.shields.io/badge/version-18.2.1-blue.svg
-[license-badge]: https://img.shields.io/badge/license-AGPL--3.0-blue.svg
