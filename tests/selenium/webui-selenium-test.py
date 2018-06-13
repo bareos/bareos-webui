@@ -17,6 +17,74 @@ from   selenium.webdriver.support.ui import Select, WebDriverWait
 #from selenium.webdriver.remote.remote_connection import LOGGER
 from   time import sleep
 
+#
+# Exceptions
+#
+class BadJobException(Exception):
+    '''Raise when a started job doesn't result in ID'''
+    def __init__(self, msg=None):
+        msg = 'Job ID could not be saved after starting the job.'
+        super(BadJobException, self).__init__(msg)
+
+class ClientStatusException(Exception):
+    '''Raise when a client does not have the expected status'''
+    def __init__(self,client, status, msg=None):
+        if status=='enabled':
+            msg = '%s is enabled and cannot be enabled again.' % client
+        if status=='disabled':
+            msg = '%s is disabled and cannot be disabled again.' % client
+        super(ClientStatusException, self).__init__(msg)
+
+class ClientNotFoundException(Exception):
+    '''Raise when the expected client is not found'''
+    def __init__(self, client, msg=None):
+        msg = 'The client %s was not found.' % client
+        super(ClientNotFoundException, self).__init__(msg)
+
+class ElementCoveredException(Exception):
+    '''Raise when an element is covered by something'''
+    def __init__(self, value):
+        msg = 'Click on element %s failed as it was covered by another element.' % value
+        super(ElementCoveredException, self).__init__(msg)
+
+class ElementTimeoutException(Exception):
+    '''Raise when waiting on an element times out'''
+    def __init__(self, value):
+        if value != 'spinner':
+            msg = 'Waiting for element %s returned a TimeoutException.' % value
+        else:
+            msg = 'Waiting for the spinner to disappear returned a TimeoutException.' % value
+        super(ElementTimeoutException, self).__init__(msg)
+
+class ElementNotFoundException(Exception):
+    '''Raise when an element is not found'''
+    def __init__(self, value):
+        msg = 'Element %s was not found.' % value
+        super(ElementNotFoundException, self).__init__(msg)
+
+class FailedClickException(Exception):
+    '''Raise when wait_and_click fails'''
+    def __init__(self, value):
+        msg = 'Waiting and trying to click %s failed.' % value
+        super(FailedClickException, self).__init__(msg)
+
+class LocaleException(Exception):
+    '''Raise when wait_and_click fails'''
+    def __init__(self, expected_languages, elements):
+        if len(expected_languages)!=len(elements):
+            msg = 'The available languages in login did not meet expectations.\n Expected '+str(len(expected_languages))+' languages but got '+str(len(elements))+'. Dropdown menue misses '+''.join(list(set(expected_languages) - set(elements)))+'.'
+        else:
+            msg = 'The available languages in login did not meet expectations.\n'+'Dropdown menue misses language '+''.join(list(set(expected_languages) - set(elements)))+' or the name changed.'
+        super(LocaleException, self).__init__(msg)
+
+class WrongCredentialsException(Exception):
+    '''Raise when wait_and_click fails'''
+    def __init__(self, username, password):
+        msg = 'Username "%s" or password "%s" is wrong.' % (username,password)
+        super(WrongCredentialsException, self).__init__(msg)
+
+
+
 class WebuiSeleniumTest(unittest.TestCase):
 
     browser = 'firefox'
@@ -35,7 +103,7 @@ class WebuiSeleniumTest(unittest.TestCase):
     # time to wait before trying again
     waittime = 0.1
 
-# Setup functions
+    # Setup functions
 
     def setUp(self):
         # Get environment variables
@@ -54,13 +122,15 @@ class WebuiSeleniumTest(unittest.TestCase):
         if self.browser == 'chrome':
             #d = DesiredCapabilities.CHROME
             #d['loggingPrefs'] = { 'browser':'ALL' }
-            # On OS X: Chromedriver path is 'usr/local/lib/chromium-browser/chromedriver'
+            # On OS X: Chromedriver path is '/usr/local/lib/chromium-browser/chromedriver'
             try:
                 os.path.isfile(self.chromedriverpath)
-            except FileNotFoundError:
-                raise DriverNotFoundException
-            else:
-                self.driver = webdriver.Chrome(self.chromedriverpath)
+                # only python >= 3
+                # except FileNotFoundError:
+            except IOError:
+                print("webdriver for {} not found at {}".format(self.browser, self.chromedriverpath))
+                raise
+            self.driver = webdriver.Chrome(self.chromedriverpath)
         if self.browser == "firefox":
             d = DesiredCapabilities.FIREFOX
             d['loggingPrefs'] = { 'browser':'ALL' }
@@ -232,7 +302,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.logout()
 
     def test_run_configured_job(self):
-        driver = self.driver
         self.login()
         job_id = self.job_start_configured()
         self.logout()
@@ -262,19 +331,23 @@ class WebuiSeleniumTest(unittest.TestCase):
             raise ClientNotFoundException(self.client)
         return status
 
-    def compare_locales(self):
-        return b
-
     def job_cancel(self, id):
         # Wait for the cancel button
         self.wait_for_element(By.ID, "//a[@id='btn-1'][@title='Cancel']")
         # Click the cancel button
         self.wait_and_click(By.ID, "//a[@id='btn-1'][@title='Cancel']")
 
+
+
     def job_start_configured(self):
         driver = self.driver
         self.wait_and_click(By.ID, 'menu-topnavbar-job')
         self.wait_and_click(By.LINK_TEXT, 'Run')
+
+        # wait for the job list (required?)
+        self.wait_for_element(By.XPATH, '(//button[@data-id="job"])')
+
+        # change settings
         Select(driver.find_element_by_id('job')).select_by_visible_text('backup-bareos-fd')
         Select(driver.find_element_by_id('client')).select_by_visible_text(self.client)
         Select(driver.find_element_by_id('level')).select_by_visible_text('Incremental')
@@ -358,21 +431,25 @@ class WebuiSeleniumTest(unittest.TestCase):
         logger = logging.getLogger()
         element = None
         logger.info('waiting for %s %s', by, value)
+
         try:
-            element = self.wait.until(EC.element_to_be_clickable((by, value)))
+            self.wait.until(EC.element_to_be_clickable((by, value)))
         except TimeoutException:
             self.driver.save_screenshot('screenshot.png')
             raise ElementTimeoutException(value)
-        if element==None:
-            try:
-                self.driver.find_element(by, value)
-            except NoSuchElementException:
-                self.driver.save_screenshot('screenshot.png')
-                raise ElementNotFoundException(value)
-            else:
-                self.driver.save_screenshot('screenshot.png')
-                raise ElementCoveredException(value)
+
+        try:
+            element = self.driver.find_element(by, value)
+        except NoSuchElementException:
+            self.driver.save_screenshot('screenshot.png')
+            raise ElementNotFoundException(value)
+        #else:
+        #    self.driver.save_screenshot('screenshot.png')
+        #    raise ElementCoveredException(value)
+
         return element
+
+
 
     def wait_for_spinner_absence(self):
         logger = logging.getLogger()
@@ -411,65 +488,3 @@ if __name__ == '__main__':
 
     unittest.main()
 
-class BadJobException(Exception):
-    '''Raise when a started job doesn't result in ID'''
-    def __init__(self, msg=None):
-        msg = 'Job ID could not be saved after starting the job.'
-        super(BadJobException, self).__init__(msg)
-
-class ClientStatusException(Exception):
-    '''Raise when a client does not have the expected status'''
-    def __init__(self,client, status, msg=None):
-        if status=='enabled':
-            msg = '%s is enabled and cannot be enabled again.' % client
-        if status=='disabled':
-            msg = '%s is disabled and cannot be disabled again.' % client
-        super(ClientStatusException, self).__init__(msg)
-
-class ClientNotFoundException(Exception):
-    '''Raise when the expected client is not found'''
-    def __init__(self, client, msg=None):
-        msg = 'The client %s was not found.' % client
-        super(ClientNotFoundException, self).__init__(msg)
-
-class ElementCoveredException(Exception):
-    '''Raise when an element is covered by something'''
-    def __init__(self, value):
-        msg = 'Click on element %s failed as it was covered by another element.' % value
-        super(ElementCoveredException, self).__init__(msg)
-
-class ElementTimeoutException(Exception):
-    '''Raise when waiting on an element times out'''
-    def __init__(self, value):
-        if value != 'spinner':
-            msg = 'Waiting for element %s returned a TimeoutException.' % value
-        else:
-            msg = 'Waiting for the spinner to disappear returned a TimeoutException.' % value
-        super(ElementTimeoutException, self).__init__(msg)
-
-class ElementNotFoundException(Exception):
-    '''Raise when an element is not found'''
-    def __init__(self, value):
-        msg = 'Element %s was not found.' % value
-        super(ElementNotFoundException, self).__init__(msg)
-
-class FailedClickException(Exception):
-    '''Raise when wait_and_click fails'''
-    def __init__(self, value):
-        msg = 'Waiting and trying to click %s failed.' % value
-        super(FailedClickException, self).__init__(msg)
-
-class LocaleException(Exception):
-    '''Raise when wait_and_click fails'''
-    def __init__(self, expected_languages, elements):
-        if len(expected_languages)!=len(elements):
-            msg = 'The available languages in login did not meet expectations.\n Expected '+str(len(expected_languages))+' languages but got '+str(len(elements))+'. Dropdown menue misses '+''.join(list(set(expected_languages) - set(elements)))+'.'
-        else:
-             msg = 'The available languages in login did not meet expectations.\n'+'Dropdown menue misses language '+''.join(list(set(expected_languages) - set(elements)))+' or the name changed.'
-        super(LocaleException, self).__init__(msg)
-
-class WrongCredentialsException(Exception):
-    '''Raise when wait_and_click fails'''
-    def __init__(self, username, password):
-        msg = 'Username "%s" or password "%s" is wrong.' % (username,password)
-        super(WrongCredentialsException, self).__init__(msg)
