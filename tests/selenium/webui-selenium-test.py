@@ -417,6 +417,12 @@ class WebuiSeleniumTest(unittest.TestCase):
             except WebDriverException as e:
                 logger.info('WebDriverException: %s', e)
                 sleep(self.waittime)
+            except ElementTimeoutException as e:
+                logger.info('ElementTimeoutException: %s', e)
+                sleep(self.waittime)
+            except ElementNotFoundException as e:
+                logger.info('ElementNotFoundException: %s', e)
+                sleep(self.waittime)
             # The case where the element doesn't exist is handled in wait_for_element
             # except NoSuchElementException as e:
             #     logger.info("NoSuchElementException while clicking: %s", e)
@@ -443,9 +449,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         except NoSuchElementException:
             self.driver.save_screenshot('screenshot.png')
             raise ElementNotFoundException(value)
-        #else:
-        #    self.driver.save_screenshot('screenshot.png')
-        #    raise ElementCoveredException(value)
 
         return element
 
