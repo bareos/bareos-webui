@@ -394,7 +394,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.LINK_TEXT, 'Logout')
         sleep(self.sleeptime)
 
-# Methods used for waiting and clicking
+    # Methods used for waiting and clicking
 
     def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
@@ -411,24 +411,28 @@ class WebuiSeleniumTest(unittest.TestCase):
                 else:
                     logger.info('closing modal %s %s', modal_by, modal_value)
             logger.info('waiting for %s %s (%ss)', by, value, seconds)
-            element = self.wait_for_element(by, value)
+
             try:
-                element.click()
-            except WebDriverException as e:
-                logger.info('WebDriverException: %s', e)
-                sleep(self.waittime)
+                element = self.wait_for_element(by, value)
             except ElementTimeoutException as e:
                 logger.info('ElementTimeoutException: %s', e)
                 sleep(self.waittime)
             except ElementNotFoundException as e:
                 logger.info('ElementNotFoundException: %s', e)
                 sleep(self.waittime)
-            # The case where the element doesn't exist is handled in wait_for_element
-            # except NoSuchElementException as e:
-            #     logger.info("NoSuchElementException while clicking: %s", e)
-            #     sleep(self.waittime)
-            else:
-                return element
+
+            if element is not None:
+                try:
+                    element.click()
+                except WebDriverException as e:
+                    logger.info('WebDriverException: %s', e)
+                    sleep(self.waittime)
+                # The case where the element doesn't exist is handled in wait_for_element
+                # except NoSuchElementException as e:
+                #     logger.info("NoSuchElementException while clicking: %s", e)
+                #     sleep(self.waittime)
+                else:
+                    return element
             seconds = (datetime.now() - starttime).total_seconds()
         logger.error('failed to click %s %s', by, value)
         raise FailedClickException(value)
