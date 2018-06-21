@@ -1,6 +1,14 @@
 #!/bin/sh
 
-which a2enmod && a2enmod rewrite setenv php7 2> /dev/null || true
-which a2enmod && a2enmod rewrite setenv php5 2> /dev/null || true
+which a2enmod && a2enmod rewrite 2> /dev/null || true
+which a2enmod && a2enmod setenv  2> /dev/null || true
+
+# PHP is required. However, there are different versions.
+# libapache2-mod-php* in Debian based distributions enable PHP by default.
+#which a2enmod && a2enmod php7.2  2> /dev/null || true
+#which a2enmod && a2enmod php7.0  2> /dev/null || true
+#which a2enmod && a2enmod php7    2> /dev/null || true
+#which a2enmod && a2enmod php5    2> /dev/null || true
+
 which a2enconf && a2enconf bareos-webui || true
 

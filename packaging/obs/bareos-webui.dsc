@@ -2,7 +2,7 @@ Format: 1.0
 Source: bareos-webui
 Binary: bareos-webui
 Architecture: all
-Version: 15.2.1
+Version: 0.0.0
 Maintainer: Bareos Packager <packager@bareos.com>
 Standards-Version: 3.9.1
 Vcs-Browser: https://github.com/bareos/bareos-webui.git
