@@ -94,7 +94,7 @@ This package contains the webui (Bareos Web User Interface).
 %setup -q
 
 %build
-#autoreconf -fvi
+autoreconf -fvi
 %configure
 make
 
